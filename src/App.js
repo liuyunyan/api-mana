@@ -1,6 +1,8 @@
 import React, { Component } from "react";
 import { observer } from "mobx-react";
-import { Layout, Menu } from "antd";
+import { Layout, Menu,message } from "antd";
+import zh_CN from 'antd/lib/locale-provider/zh_CN';
+import en_US from 'antd/lib/locale-provider/en_US';
 import {
   HashRouter as Router,
   Link
@@ -11,6 +13,8 @@ import {
   FormOutlined,
   tableOutlined,
 } from "@ant-design/icons";
+import Spinner from './components/spinner/spinner'
+
 import "./App.css";
 import HomeApp from './containers'
 
@@ -25,8 +29,6 @@ class App extends Component {
       collapsed: false,
     };
   }
-  // componentWillMount {}
-  // componentDidMount {}
   onCollapse = (collapsed) => {
     console.log(collapsed);
     this.setState({ collapsed });
@@ -34,7 +36,10 @@ class App extends Component {
   render() {
     const { collapsed } = this.state;
     return (
+      // <LocaleProvider locale={zh_CN}>
+  
       <Layout style={{ minHeight: "100vh" }}>
+          <Spinner />
         <Sider
           //   style={{
           //   overflow: 'auto',
@@ -48,7 +53,7 @@ class App extends Component {
         >
           <div className="logo" />
           <Router>
-          <Menu theme="dark" defaultSelectedKeys={["1"]} mode="inline">
+          <Menu theme="dark" defaultSelectedKeys={["3"]} mode="inline">
             <Menu.Item key="1" icon={<ConsoleSqlOutlined />}>
               Option 1
             </Menu.Item>
@@ -108,6 +113,7 @@ class App extends Component {
           </Footer>
         </Layout>
       </Layout>
+      // </LocaleProvider>
     );
   }
 }
