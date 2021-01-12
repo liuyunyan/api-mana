@@ -1,22 +1,21 @@
 import React, { Component, Suspense, lazy } from 'react';
 import ReactDOM from 'react-dom';
-import Loading from './helper/loading.js'
+import Loading from '../helper/loading.js'
 
-import App from './App';
-import Login from './Login';
-import reportWebVitals from './reportWebVitals';
 import { HashRouter as Router, withRouter,Switch,Route } from 'react-router-dom';
 
-const Source = lazy(() => import('./containers/source/Index'))
+const Source = lazy(() => import('./source/Index'))
+const Third = lazy(() => import('./system/Third'))
+const User = lazy(() => import('./system/User'))
 
-ReactDOM.render(
-  <React.StrictMode>
+const HomeApp = () => (
     <Router>
     <Suspense fallback={<Loading />}>
     <Switch>
-      <Route exact path='/' component={App}/>
+      <Route exact path='/' component={Source}/>
       <Route exact path='/source' component={Source}/>
-      <Route exact path='/login' component={Login}/>
+      <Route exact path='/third' component={Third}/>
+      <Route exact path='/user' component={User}/>
       
     </Switch>
     {/* <Switch>
@@ -28,9 +27,8 @@ ReactDOM.render(
     </Switch> */}
     </Suspense>
   </Router>
-  </React.StrictMode>,
-  document.getElementById('root')
 );
+export default HomeApp;
 
 // If you want to start measuring performance in your app, pass a function
 // to log results (for example: reportWebVitals(console.log))
