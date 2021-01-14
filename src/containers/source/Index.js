@@ -2,6 +2,8 @@ import React from "react";
 import { observer } from "mobx-react";
 import { Table, Row, Col, Button } from "antd";
 import SourceStore from "../../stores/SourceStore";
+import ModalBox from "./components/ModalBox";
+import SourceEdit from "./components/SourceEdit";
 
 @observer
 class Source extends React.Component {
@@ -9,12 +11,15 @@ class Source extends React.Component {
     super(props);
     // this.columns = [];
     this.state = {
-      modelShow: false,
+      visible: false,
+      isEdit:false,
     };
     this.store = new SourceStore();
     this.handleNew = this.handleNew.bind(this);
     this.handleEdit = this.handleEdit.bind(this);
     this.handleRemove = this.handleRemove.bind(this);
+    this.handleSave = this.handleSave.bind(this);
+    this.handleCancel = this.handleCancel.bind(this);
     this.initColumn()
   }
   initColumn=()=>{
@@ -68,17 +73,27 @@ class Source extends React.Component {
   componentWillUnmount() {}
   handleNew(show) {
     this.setState({
-      modelShow: true,
+      visible: true,
+      isEdit:false
     });
   }
   handleEdit(show) {
     this.setState({
-      modelShow: true,
+      visible: true,
+      isEdit:true
     });
   }
   handleRemove(show) {
+    
+  }
+  handleSave(show) {
     this.setState({
-      modelShow: true,
+      visible: false,
+    });
+  }
+  handleCancel(show) {
+    this.setState({
+      visible: false,
     });
   }
   render() {
@@ -98,6 +113,14 @@ class Source extends React.Component {
            dataSource={data} />
            </Col>
         </Row>
+        <ModalBox
+					modalTitle={this.state.isEdit ? "编辑" : "新增"}
+					visible={this.state.visible}
+					handleOk={this.handleSave}
+					handleCancel={this.handleCancel}
+				>
+					<SourceEdit store={this.store} />
+				</ModalBox>
       </Row>
     );
   }
