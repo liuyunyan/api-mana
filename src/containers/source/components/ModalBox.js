@@ -4,7 +4,7 @@
 import React from 'react';
 import { observer } from 'mobx-react';
 import { Modal } from 'antd';
-@observer
+// @observer
 class ModalBox extends React.Component {
   constructor(props) {
     super(props)
@@ -18,13 +18,13 @@ class ModalBox extends React.Component {
         visible={this.props.visible}
         onOk={this.props.handleOk}
         onCancel={this.props.handleCancel}
-        destroyOnClose={true}
+        // destroyOnClose={true}
         keyboard={false}
         maskClosable={false}
         width={800}
+        // footer={null}
         cancelText={"取消"}
         okText={"确定"}
-        // centered={true}
       >
         {
           React.Children.map(this.props.children, child => React.cloneElement(child, {

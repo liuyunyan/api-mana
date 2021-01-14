@@ -6,6 +6,11 @@ const Config = {
 serverUrl,
 source: {
         query: `${serverUrl}/datasource/list`,
+        add: `${serverUrl}/datasource/add`,
+        queryDetail: `${serverUrl}/datasource/`,
+        update: `${serverUrl}/datasource`,
+        delete: `${serverUrl}/datasource/`,
+        connection: `${serverUrl}/datasource/connection`,
     },
 };
 export default Config;
