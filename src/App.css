@@ -8,3 +8,12 @@
 .site-layout .site-layout-background {
   background: #fff;
 }
+.color-red,.color-red:hover,.color-red:active{
+  color: #f5222d;
+}
+.mr5{
+  margin-right: 5px;
+}
+.ml10{
+  margin-left: 10px;
+}

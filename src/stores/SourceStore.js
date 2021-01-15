@@ -1,4 +1,4 @@
-import { makeAutoObservable } from "mobx";
+import { makeAutoObservable, action } from "mobx";
 import Config from "../config";
 import axios from "./AxiosAjax";
 import { message } from "antd";
@@ -9,15 +9,27 @@ export default class SourceStore {
 
   data = []; //
   columns = [
-    { key: "name", label: "数据源名称", type: "String", required: true },
-    { key: "type", label: "数据库类型", type: "Enum", required: true, defaultValue: "MYSQL", EnumData: [{ title: "MYSQL", value: "MYSQL" }, { title: "pg", value: "pg" }] },
-    { key: "mark", label: "备注", type: "TextArea", required: false, placeholder: "请输入至少5个字符" },
-    { key: "ip", label: "ip地址", type: "string", required: true },
-    { key: "port", label: "端口号", type: "Number", required: true },
-    { key: "username", label: "用户名", type: "String", required: true },
-    { key: "password", label: "密码", type: "String", required: true },
+    { key: "name", label: "数据源名称", type: "String", validate: { required: true } },
+    { key: "type", label: "数据库类型", type: "Enum", validate: { required: true }, defaultValue: "MYSQL", EnumData: [{ title: "MYSQL", value: "MYSQL" }, { title: "pg", value: "pg" }] },
+    {
+      key: "mark", label: "备注", type: "TextArea", validate: {
+        required: false, 
+        customer: (value) => {
+          if (value.length >= 5) {
+            return true
+          } else {
+            return false
+          }
+        },
+      }, placeholder: "请输入至少5个字符"
+    },
+    { key: "ip", label: "ip地址", type: "string", validate: { required: true } },
+    { key: "port", label: "端口号", type: "Number", validate: { required: true } },
+    { key: "username", label: "用户名", type: "String", validate: { required: true } },
+    { key: "password", label: "密码", type: "String", validate: { required: true } },
   ]; //
-  values = {}
+  values = {};
+  validates = {}
 
   //获取表格的列模型
   queryList() {
@@ -57,7 +69,55 @@ export default class SourceStore {
         message.error('数据请求失败')
       });
   }
+
+  validateValue(value) {
+    let columns = this.columns;
+    let length = columns.length;
+    for (let i = 0; i < length; i++) {
+      let col = columns[i]
+      let { validate, key, label } = col;
+      let value = this.values[key];
+      if (validate.required) {
+        if (!value && value !== 0) {
+          let validateMessage = { hasFeedback: true, validateStatus: "error", help: label + "必输" }
+          this.validates[key] = validateMessage
+          break;
+        }
+      }
+      if (validate.customer && typeof validate.customer === 'function') {
+        if(!value){
+          value = ""
+        }
+        let flag = validate.customer(value)
+        if (!flag) {
+          let validateMessage = { hasFeedback: true, validateStatus: "error", help: label + "必输" }
+          this.validates[key] = validateMessage
+          break;
+        }
+      }
+      let validateMessage = { hasFeedback: true, validateStatus: "success" }
+      this.validates[key] = validateMessage
+    }
+  }
+  beforeSave() {
+    this.validateValue()
+    let arr = Object.values(this.validates)
+    let flag = arr.find((val) => {
+      if (val.validateStatus === "error") {
+        return true
+      }
+      return false
+    })
+    return flag
+  }
+
   onSave(data) {
+    this.validateValue()
+    let flag = this.beforeSave()
+    if (flag) {
+      message.error("校验失败")
+      return false
+    }
     let reqconfig = {
       method: "POST",
       url: Config.source.add,
@@ -77,6 +137,12 @@ export default class SourceStore {
       });
   }
   onUpdate(data) {
+    this.validateValue()
+    let flag = this.beforeSave()
+    if (flag) {
+      message.error("校验失败")
+      return false
+    }
     let reqconfig = {
       method: "PUT",
       url: Config.source.update,

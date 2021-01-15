@@ -2,7 +2,7 @@
  * @file 弹出层组件 显示 有用
  */
 import React from "react";
-// import { observer } from "mobx-react";
+import { observer } from "mobx-react";
 import { Form, Input, Select, InputNumber, Button, message } from "antd";
 const { Option } = Select;
 
@@ -21,14 +21,14 @@ const tailLayout = {
   },
 };
 
-// @observer
+@observer
 class SourceEdit extends React.Component {
   constructor(props) {
     super(props);
     this.store = this.props.store;
     this.state = {
     };
-    this.onTest=this.onTest.bind(this)
+    this.onTest = this.onTest.bind(this)
   }
   // formRef = React.createRef();
 
@@ -41,59 +41,86 @@ class SourceEdit extends React.Component {
   //   }
   // }
 
-  onFinish = (values) => {
-    console.log(values);
-    this.props.onSave(values)
-  };
-  handleChange = (key, event) => {
-    // console.log(key,);
+  handleInputChange = (col, event) => {
+    let key = col.key
     let value = event.target.value.trim()
-        this.store.values[key] = value
+    let flag = this.validateValue(col, value)
+    if (flag) {
+      this.setValue(key, value)
+    }
   }
-  onSelectChange = (key, value) => {
-    this.store.values[key] = value
+  onSelectChange = (col, value) => {
+    let key = col.key
+    let flag = this.validateValue(col, value)
+    if (flag) {
+      this.setValue(key, value)
+    }
   };
-  handleTextChange = (key, event) => {
-    // console.log(key,value);
-    let value = event.target.value.trim()
-    this.store.values[key] = value
+  // handleTextChange = (col, event) => {
+  //   let key = col.key
+  //   let value = event.target.value.trim()
+  //   this.setValue(value)
+  // };
+  handleNumberChange = (col, value) => {
+    let key = col.key
+    let flag = this.validateValue(col, value)
+    if (flag) {
+      this.setValue(key, value)
+    }
   };
-  handleNumberChange = (key, value) => {
+  setValue = (key, value) => {
     this.store.values[key] = value
-  };
-  onReset = () => {
+  }
+  validateValue = (col, value) => {
+    let { validate, key, label } = col;
+    if (validate.required) {
+      if (!value && value !== 0) {
+        let validateMessage = { hasFeedback: true, validateStatus: "error", help: label + "必输" }
+        this.store.validates[key] = validateMessage
+        return false
+      }
+    }
+    if (validate.customer && typeof validate.customer === 'function') {
+      let flag = validate.customer(value)
+      if (!flag) {
+        this.store.validates[key] = "error"
+        let validateMessage = { hasFeedback: true, validateStatus: "error", help: "请输入正确的格式" }
+        this.store.validates[key] = validateMessage
+        return false
+      }
+    }
+
+    let validateMessage = { hasFeedback: true, validateStatus: "success" }
+    this.store.validates[key] = validateMessage
+    return true
   }
   onTest() {
     this.store.onTest()
   }
   render() {
+    // const style = { color: '#f5222d', marginRight: "5px" }
     let { columns } = this.props;
-    let values = this.store.values;
+    let { values, validates } = this.store;
     return (
       <Form {...layout} //name="control-hooks" //onFinish={this.onFinish}
         initialValues={{ "type": "MYSQL" }}
       >
         {columns.map((col, index) => {
-          let value = values[col.key]
+          let value = values[col.key];
+          let validate = validates[col.key]
+          let required = col.validate && col.validate.required
           if (col.type === "String") {
             return (
               <Form.Item
                 key={index}
                 // name={col.key}
-                label={col.label}
-                rules={
-                  col.required
-                    ? [
-                      {
-                        required: true,
-                      },
-                    ]
-                    : null
-                }
+                label={(<span>{required ? (<span className="color-red mr5">*</span>) : null}{col.label}</span>)}
+                {...validate}
+
               >
-                <Input 
-                onChange={this.handleChange.bind(this, col.key)}
-                 value={value} placeholder={ "请输入"} />
+                <Input
+                  onChange={this.handleInputChange.bind(this, col)}
+                  value={value} placeholder={"请输入"} />
               </Form.Item>
             );
           }
@@ -102,22 +129,15 @@ class SourceEdit extends React.Component {
               <Form.Item
                 key={index}
                 // name={col.key}
-                label={col.label}
-                rules={
-                  col.required
-                    ? [
-                      {
-                        required: true,
-                      },
-                    ]
-                    : null
-                }
+                label={(<span>{required ? (<span className="color-red mr5">*</span>) : null}{col.label}</span>)}
+                {...validate}
               >
                 <Select
                   placeholder={col.placeholder || "请选择"}
-                  onChange={this.onSelectChange.bind(this, col.key)}
+                  onChange={this.onSelectChange.bind(this, col)}
                   allowClear
                   value={value}
+                  defaultValue={col.defaultValue}
                 >
                   {col.EnumData.map((val, i) => {
                     return (
@@ -134,18 +154,10 @@ class SourceEdit extends React.Component {
               <Form.Item
                 key={index}
                 // name={col.key}
-                label={col.label}
-                rules={
-                  col.required
-                    ? [
-                      {
-                        required: true,
-                      },
-                    ]
-                    : null
-                }
+                label={(<span>{required ? (<span className="color-red mr5">*</span>) : null}{col.label}</span>)}
+                {...validate}
               >
-                <Input.TextArea onChange={this.handleTextChange.bind(this, col.key)} value={value} placeholder={col.placeholder || "请输入"} />
+                <Input.TextArea onChange={this.handleInputChange.bind(this, col)} value={value} placeholder={col.placeholder || "请输入"} />
               </Form.Item>);
           }
           if (col.type === "Number") {
@@ -153,18 +165,10 @@ class SourceEdit extends React.Component {
               <Form.Item
                 key={index}
                 // name={col.key}
-                label={col.label}
-                rules={
-                  col.required
-                    ? [
-                      {
-                        required: true,
-                      },
-                    ]
-                    : null
-                }
+                label={(<span>{required ? (<span className="color-red mr5">*</span>) : null}{col.label}</span>)}
+                {...validate}
               >
-                <InputNumber onChange={this.handleNumberChange.bind(this, col.key)} value={value} placeholder={col.placeholder || "请输入"} />
+                <InputNumber onChange={this.handleNumberChange.bind(this, col)} value={value} placeholder={col.placeholder || "请输入"} />
               </Form.Item>);
           }
         })}
@@ -173,8 +177,8 @@ class SourceEdit extends React.Component {
             测试连接
           </Button>
         </Form.Item>
-        </Form>
-        
+      </Form>
+
     );
   }
 }

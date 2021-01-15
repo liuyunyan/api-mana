@@ -1,6 +1,6 @@
 import React from "react";
 import { observer } from "mobx-react";
-import { Table, Row, Col, Button, message } from "antd";
+import { Table, Row, Col, Button, message, Modal } from "antd";
 import SourceStore from "../../stores/SourceStore";
 import ModalBox from "./components/ModalBox";
 import SourceEdit from "./components/SourceEdit";
@@ -13,7 +13,6 @@ class Source extends React.Component {
     this.state = {
       visible: false,
       isEdit: false,
-      values: {}
     };
     this.store = new SourceStore();
     this.handleNew = this.handleNew.bind(this);
@@ -62,7 +61,7 @@ class Source extends React.Component {
         key: 'option',
         dataIndex: 'option',
         render: () => [
-          <a key="link" onClick={this.handleEdit} style={{marginRight:"10px"}}>编辑</a>, <a key="link2"
+          <a key="link" onClick={this.handleEdit}>编辑</a>, <a key="link2" className="color-red ml10"
             onClick={this.handleRemove}
           >删除</a>],
       },
@@ -77,18 +76,32 @@ class Source extends React.Component {
     this.setState({
       visible: true,
       isEdit: false,
-      values: {}
     });
   }
-  handleEdit(values) {
-    // console.log(this.store.values)
+  handleEdit() {
     this.setState({
       visible: true,
       isEdit: true,
     });
   }
   handleRemove() {
-    this.store.onDelete()
+
+    const config = {
+      title: '确认删除吗?',
+      // content: (
+      //   <>
+      //     <ReachableContext.Consumer>{name => `Reachable: ${name}!`}</ReachableContext.Consumer>
+      //     <br />
+      //     <UnreachableContext.Consumer>{name => `Unreachable: ${name}!`}</UnreachableContext.Consumer>
+      //   </>
+      // ),
+      onOk: () => {
+        this.store.onDelete()
+      }
+    };
+
+    Modal.confirm(config);
+
   }
   async handleSave() {
     let values = this.store.values
@@ -105,16 +118,18 @@ class Source extends React.Component {
       this.setState({
         visible: false,
       });
+      this.store.validates = {}
     } else {
       // message.error("保存失败")
     }
 
 
   }
-  handleCancel(show) {
+  handleCancel() {
     this.setState({
       visible: false,
     });
+    this.store.validates = {};
   }
   render() {
     const data = this.store.data;
@@ -128,10 +143,6 @@ class Source extends React.Component {
         <Row>
           <Col span={24}>
             <Table columns={this.columns} //scroll={{ x: '100v' }}
-              // onRow={(record) => {
-              //       // this.store.values = JSON.parse(JSON.stringify(record))
-              //       this.setState({values:record})
-              // }}
               onRow={(record) => {
                 return {
                   onClick: (...ev) => {
@@ -150,7 +161,7 @@ class Source extends React.Component {
           handleOk={this.handleSave}
           handleCancel={this.handleCancel}
         >
-          <SourceEdit store={this.store} columns={this.store.columns} onSave={this.handleSave} onCancel={this.handleCancel} values={this.store.values} />
+          <SourceEdit store={this.store} columns={this.store.columns} onSave={this.handleSave} onCancel={this.handleCancel} values={this.store.values} validateStatus={this.store.validateStatus} />
         </ModalBox>
       </Row>
     );
