@@ -22,9 +22,6 @@ class ModalBox extends React.Component {
         keyboard={false}
         maskClosable={false}
         width={800}
-        // footer={null}
-        // cancelText={"取消"}
-        // okText={"确定"}
       >
         {
           React.Children.map(this.props.children, child => React.cloneElement(child, {

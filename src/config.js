@@ -12,5 +12,13 @@ source: {
         delete: `${serverUrl}/datasource/`,
         connection: `${serverUrl}/datasource/connection`,
     },
+third: {
+        query: `${serverUrl}/thirdPartyPlatform/list`,
+        add: `${serverUrl}/thirdPartyPlatform/add`,
+        queryDetail: `${serverUrl}/thirdPartyPlatform/`,
+        update: `${serverUrl}/thirdPartyPlatform`,
+        delete: `${serverUrl}/thirdPartyPlatform/`,
+        connection: `${serverUrl}/thirdPartyPlatform/connection`,
+    },
 };
 export default Config;

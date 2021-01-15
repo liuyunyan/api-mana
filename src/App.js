@@ -70,7 +70,6 @@ class App extends Component {
                   </Menu.Item>
                   <Menu.Item key="8">
                     <Link to="/user">用户管理</Link>
-              用户管理
               </Menu.Item>
                 </SubMenu>
               </Menu>

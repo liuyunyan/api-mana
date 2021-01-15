@@ -2,7 +2,7 @@ import React from "react";
 import { observer } from "mobx-react";
 import { Table, Row, Col, Button, message, Modal } from "antd";
 import SourceStore from "../../stores/SourceStore";
-import ModalBox from "./components/ModalBox";
+import ModalBox from "../../components/ModalBox";
 import SourceEdit from "./components/SourceEdit";
 
 @observer
