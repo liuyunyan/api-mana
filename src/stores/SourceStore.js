@@ -11,6 +11,10 @@ export default class SourceStore {
   columns = [
     { key: "name", label: "数据源名称", type: "String", validate: { required: true } },
     { key: "type", label: "数据库类型", type: "Enum", validate: { required: true }, defaultValue: "MYSQL", EnumData: [{ title: "MYSQL", value: "MYSQL" }, { title: "pg", value: "pg" }] },
+    { key: "ip", label: "ip地址", type: "String", validate: { required: true } },
+    { key: "port", label: "端口号", type: "Number", validate: { required: true } },
+    { key: "username", label: "用户名", type: "String", validate: { required: true } },
+    { key: "password", label: "密码", type: "String", validate: { required: true } },
     {
       key: "mark", label: "备注", type: "TextArea", validate: {
         required: false, 
@@ -23,10 +27,6 @@ export default class SourceStore {
         },
       }, placeholder: "请输入至少5个字符"
     },
-    { key: "ip", label: "ip地址", type: "string", validate: { required: true } },
-    { key: "port", label: "端口号", type: "Number", validate: { required: true } },
-    { key: "username", label: "用户名", type: "String", validate: { required: true } },
-    { key: "password", label: "密码", type: "String", validate: { required: true } },
   ]; //
   values = {};
   validates = {}

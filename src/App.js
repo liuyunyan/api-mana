@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { observer } from "mobx-react";
-import { Layout, Menu, message,ConfigProvider,Row,Col } from "antd";
+import { Layout, Menu, message, ConfigProvider} from "antd";
 import zh_CN from 'antd/lib/locale-provider/zh_CN';
 // import en_US from 'antd/lib/locale-provider/en_US';
 import {
@@ -70,7 +70,7 @@ class App extends Component {
                   </Menu.Item>
                   <Menu.Item key="8">
                     <Link to="/user">用户管理</Link>
-              </Menu.Item>
+                  </Menu.Item>
                 </SubMenu>
               </Menu>
             </Router>
@@ -104,11 +104,7 @@ class App extends Component {
                 className="site-layout-background"
                 style={{ padding: 24, minHeight: 360 }}
               >
-                <Row>
-                  <Col  span={24}><HomeApp />
-                  </Col>
-                </Row>
-                
+                <HomeApp />
               </div>
             </Content>
             <Footer style={{ textAlign: "center" }}>

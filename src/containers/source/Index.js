@@ -135,8 +135,8 @@ class Source extends React.Component {
     const data = this.store.data;
     return (
       <Row>
-        <Col span={24}>
-          <Button type="primary" onClick={this.handleNew}>
+        <Col span={24} className="mb15">
+          <Button type="primary" className="fr" onClick={this.handleNew}>
             新增
           </Button>
         </Col>

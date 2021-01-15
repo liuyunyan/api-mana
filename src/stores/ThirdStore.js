@@ -12,7 +12,7 @@ export default class ThirdStore {
     { key: "name", label: "平台名称", type: "String", validate: { required: true } },
     { key: "username", label: "平台账号", type: "String", validate: { required: true } },
     { key: "interfaceId", label: "授权接口", type: "Number", validate: { required: true } },
-    { key: "apiKey", label: "APIKey", type: "string", validate: { required: true },placeholder:"点击右侧按钮生成" },
+    { key: "apiKey", label: "APIKey", type: "String", validate: { required: true },placeholder:"点击右侧按钮生成" },
     {
       key: "remarks", label: "备注", type: "TextArea", validate: {
         required: false, 
