@@ -90,7 +90,7 @@ export default class SourceStore {
         }
         let flag = validate.customer(value)
         if (!flag) {
-          let validateMessage = { hasFeedback: true, validateStatus: "error", help: label + "必输" }
+          let validateMessage = { hasFeedback: true, validateStatus: "error", help: "请输入正确的格式" }
           this.validates[key] = validateMessage
           break;
         }
