@@ -142,7 +142,7 @@ class Source extends React.Component {
         </Col>
         <Row>
           <Col span={24}>
-            <Table columns={this.columns} //scroll={{ x: '100v' }}
+            <Table columns={this.columns}  scroll={{ x: 'calc(100vw - 280px)' }}
               onRow={(record) => {
                 return {
                   onClick: (...ev) => {
