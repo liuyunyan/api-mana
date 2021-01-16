@@ -8,6 +8,9 @@
 .site-layout-background {
   background: #fff;
 }
+.ant-badge-status-dot{
+  margin-right: 5px;
+}
 .color-red,.color-red:hover,.color-red:active{
   color: #f5222d;
 }

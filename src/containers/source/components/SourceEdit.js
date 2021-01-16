@@ -98,7 +98,6 @@ class SourceEdit extends React.Component {
     this.store.onTest()
   }
   render() {
-    // const style = { color: '#f5222d', marginRight: "5px" }
     let { columns } = this.props;
     let { values, validates } = this.store;
     return (

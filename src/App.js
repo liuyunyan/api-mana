@@ -53,12 +53,12 @@ class App extends Component {
           >
             <div className="logo" />
             <Router>
-              <Menu theme="dark" defaultSelectedKeys={["3"]} mode="inline">
+              <Menu theme="dark" defaultSelectedKeys={["2"]} mode="inline">
                 <Menu.Item key="1" icon={<ConsoleSqlOutlined />}>
                   Option 1
             </Menu.Item>
                 <Menu.Item key="2" icon={<ConsoleSqlOutlined />}>
-                  Option 2
+                  <Link to="/interface">接口管理</Link>
             </Menu.Item>
                 <Menu.Item key="3" icon={<FormOutlined />}>
                   <Link to="/source">数据源管理</Link>

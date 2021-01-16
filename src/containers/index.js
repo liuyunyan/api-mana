@@ -4,6 +4,7 @@ import Loading from '../helper/loading.js'
 
 import { HashRouter as Router, withRouter,Switch,Route } from 'react-router-dom';
 
+const Interface = lazy(() => import('./interface/Index'))
 const Source = lazy(() => import('./source/Index'))
 const Third = lazy(() => import('./system/Third'))
 const User = lazy(() => import('./system/User'))
@@ -12,7 +13,8 @@ const HomeApp = () => (
     <Router>
     <Suspense fallback={<Loading />}>
     <Switch>
-      <Route exact path='/' component={Source}/>
+      <Route exact path='/' component={Interface}/>
+      <Route exact path='/interface' component={Interface}/>
       <Route exact path='/source' component={Source}/>
       <Route exact path='/third' component={Third}/>
       <Route exact path='/user' component={User}/>

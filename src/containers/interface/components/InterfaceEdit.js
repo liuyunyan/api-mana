@@ -3,7 +3,7 @@
  */
 import React from "react";
 import { observer } from "mobx-react";
-import { Form, Input, Select, InputNumber, Button, message } from "antd";
+import { Form, Input, Select, InputNumber, Button, message, Row } from "antd";
 const { Option } = Select;
 
 const layout = {
@@ -22,13 +22,13 @@ const tailLayout = {
 };
 
 @observer
-class ThirdEdit extends React.Component {
+class InterfaceEdit extends React.Component {
   constructor(props) {
     super(props);
     this.store = this.props.store;
     this.state = {
     };
-    this.onCreat = this.onCreat.bind(this)
+    this.handleOk = this.handleOk.bind(this)
   }
   // formRef = React.createRef();
 
@@ -56,11 +56,6 @@ class ThirdEdit extends React.Component {
       this.setValue(key, value)
     }
   };
-  // handleTextChange = (col, event) => {
-  //   let key = col.key
-  //   let value = event.target.value.trim()
-  //   this.setValue(value)
-  // };
   handleNumberChange = (col, value) => {
     let key = col.key
     let flag = this.validateValue(col, value)
@@ -94,16 +89,18 @@ class ThirdEdit extends React.Component {
     this.store.validates[key] = validateMessage
     return true
   }
-  onCreat() {
-    this.store.onCreat()
+  handleOk() {
+    this.props.handleOk()
   }
   render() {
     let { columns } = this.props;
     let { values, validates } = this.store;
     return (
       <Form {...layout} //name="control-hooks" //onFinish={this.onFinish}
-        initialValues={{ "type": "MYSQL" }}
       >
+        <Row>
+          
+        </Row>
         {columns.map((col, index) => {
           let value = values[col.key];
           let validate = validates[col.key]
@@ -172,9 +169,12 @@ class ThirdEdit extends React.Component {
           }
         })}
         <Form.Item {...tailLayout}>
-          <Button type="link" htmlType="button" onClick={this.onCreat}>
-          点击生成
-          </Button>
+        <Button htmlType="button" onClick={this.props.handleCancel}>
+          取消
+        </Button>
+        <Button type="primary" htmlType="button" onClick={this.handleOk}>
+          提交
+        </Button>
         </Form.Item>
       </Form>
 
@@ -182,4 +182,4 @@ class ThirdEdit extends React.Component {
   }
 }
 
-export default ThirdEdit;
+export default InterfaceEdit;
