@@ -3,7 +3,7 @@
  */
 import React from "react";
 import { observer } from "mobx-react";
-import { Form, Input, Select, InputNumber, Button, message, Row } from "antd";
+import { Form, Input, Select, InputNumber, Button, Row, Col, Card } from "antd";
 const { Option } = Select;
 
 const layout = {
@@ -92,88 +92,129 @@ class InterfaceEdit extends React.Component {
   handleOk() {
     this.props.handleOk()
   }
+  getFields = (columns, values, validates) => {
+    const count = columns.length;
+    let children = [];
+    for (let index = 0; index < count; index++) {
+      let item;
+      let col = columns[index]
+      let value = values[col.key];
+      let validate = validates[col.key]
+      let required = col.validate && col.validate.required
+      if (col.type === "String") {
+        item = (
+          <Col span={12} key={index}>
+            <Form.Item
+              key={index}
+              // name={col.key}
+              label={(<span>{required ? (<span className="color-red mr5">*</span>) : null}{col.label}</span>)}
+              {...validate}
+
+            >
+              <Input
+                onChange={this.handleInputChange.bind(this, col)}
+                value={value} placeholder={"请输入"} />
+            </Form.Item>
+          </Col>
+
+        );
+      }
+      if (col.type === "Enum") {
+        item = (
+          <Col span={12} key={index}>
+            <Form.Item
+              key={index}
+              // name={col.key}
+              label={(<span>{required ? (<span className="color-red mr5">*</span>) : null}{col.label}</span>)}
+              {...validate}
+            >
+              <Select
+                placeholder={col.placeholder || "请选择"}
+                onChange={this.onSelectChange.bind(this, col)}
+                allowClear
+                value={value}
+                defaultValue={col.defaultValue}
+              >
+                {col.EnumData.map((val, i) => {
+                  return (
+                    <Option key={i} value={val.value}>
+                      {val.title}
+                    </Option>
+                  );
+                })}
+              </Select>
+            </Form.Item>
+          </Col>
+        );
+      }
+      if (col.type === "TextArea") {
+
+        item = (
+          <Col span={24} key={index}>
+            <Form.Item
+              key={index}
+              // name={col.key}
+              label={(<span>{required ? (<span className="color-red mr5">*</span>) : null}{col.label}</span>)}
+              {...validate}
+            >
+              <Input.TextArea onChange={this.handleInputChange.bind(this, col)} value={value} placeholder={col.placeholder || "请输入"} />
+            </Form.Item>
+          </Col>
+        );
+      }
+      if (col.type === "Number") {
+        item = (
+          <Col span={12} key={index}>
+            <Form.Item
+              key={index}
+              // name={col.key}
+              label={(<span>{required ? (<span className="color-red mr5">*</span>) : null}{col.label}</span>)}
+              {...validate}
+            >
+              <InputNumber onChange={this.handleNumberChange.bind(this, col)} value={value} placeholder={col.placeholder || "请输入"} />
+            </Form.Item>
+          </Col>
+        );
+      }
+
+      children.push(
+        item
+      );
+    }
+
+    return children;
+  }
+
   render() {
     let { columns } = this.props;
     let { values, validates } = this.store;
     return (
-      <Form {...layout} //name="control-hooks" //onFinish={this.onFinish}
+      <Form className="interface" // {...layout} name="control-hooks" //onFinish={this.onFinish}
       >
-        <Row>
-          
-        </Row>
-        {columns.map((col, index) => {
-          let value = values[col.key];
-          let validate = validates[col.key]
-          let required = col.validate && col.validate.required
-          if (col.type === "String") {
-            return (
-              <Form.Item
-                key={index}
-                // name={col.key}
-                label={(<span>{required ? (<span className="color-red mr5">*</span>) : null}{col.label}</span>)}
-                {...validate}
+        <Card title="基本信息">
+          <Row gutter={24}>{this.getFields(columns, values, validates)}</Row>
+        </Card>
+        <Card title="接口定义">
+          <Card type="inner" title="引用数据">
+            Inner Card content
+    </Card>
+          <Card type="inner" title="输入参数">
+            Inner Card content
+    </Card>
+          <Card type="inner" title="返回值">
+            Inner Card content
+    </Card>
+          <Card type="inner" title="SQL 语句">
+            Inner Card content
+    </Card>
+        </Card>
 
-              >
-                <Input
-                  onChange={this.handleInputChange.bind(this, col)}
-                  value={value} placeholder={"请输入"} />
-              </Form.Item>
-            );
-          }
-          if (col.type === "Enum") {
-            return (
-              <Form.Item
-                key={index}
-                // name={col.key}
-                label={(<span>{required ? (<span className="color-red mr5">*</span>) : null}{col.label}</span>)}
-                {...validate}
-              >
-                <Select
-                  placeholder={col.placeholder || "请选择"}
-                  onChange={this.onSelectChange.bind(this, col)}
-                  allowClear
-                  value={value}
-                  defaultValue={col.defaultValue}
-                >
-                  {col.EnumData.map((val, i) => {
-                    return (
-                      <Option key={i} value={val.value}>
-                        {val.title}
-                      </Option>
-                    );
-                  })}
-                </Select>
-              </Form.Item>);
-          }
-          if (col.type === "TextArea") {
-            return (
-              <Form.Item
-                key={index}
-                // name={col.key}
-                label={(<span>{required ? (<span className="color-red mr5">*</span>) : null}{col.label}</span>)}
-                {...validate}
-              >
-                <Input.TextArea onChange={this.handleInputChange.bind(this, col)} value={value} placeholder={col.placeholder || "请输入"} />
-              </Form.Item>);
-          }
-          if (col.type === "Number") {
-            return (
-              <Form.Item
-                key={index}
-                // name={col.key}
-                label={(<span>{required ? (<span className="color-red mr5">*</span>) : null}{col.label}</span>)}
-                {...validate}
-              >
-                <InputNumber onChange={this.handleNumberChange.bind(this, col)} value={value} placeholder={col.placeholder || "请输入"} />
-              </Form.Item>);
-          }
-        })}
         <Form.Item {...tailLayout}>
-        <Button htmlType="button" onClick={this.props.handleCancel}>
-          取消
+          <Button htmlType="button" onClick={this.props.handleCancel}>
+            取消
         </Button>
-        <Button type="primary" htmlType="button" onClick={this.handleOk}>
-          提交
+          <Button type="primary" htmlType="button" onClick={this.handleOk}>
+            提交
         </Button>
         </Form.Item>
       </Form>

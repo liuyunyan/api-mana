@@ -1,6 +1,6 @@
 import React from "react";
 import { observer } from "mobx-react";
-import { Table, Row, Col, Button, message, Modal ,Space} from "antd";
+import { Table, Row, Col, Button, message, Modal, Space } from "antd";
 import InterfaceStore from "../../stores/InterfaceStore";
 import ModalBox from "../../components/ModalBox";
 import InterfaceEdit from "./components/InterfaceEdit";
@@ -12,11 +12,12 @@ class Interface extends React.Component {
     // this.columns = [];
     this.state = {
       visible: false,
-      isEdit: false,
+      isEdit: 0,//0新增，1编辑，2浏览
     };
     this.store = new InterfaceStore();
     this.handleNew = this.handleNew.bind(this);
     this.handleEdit = this.handleEdit.bind(this);
+    this.handleView = this.handleView.bind(this);
     this.handleRemove = this.handleRemove.bind(this);
     this.handleSave = this.handleSave.bind(this);
     this.handleCancel = this.handleCancel.bind(this);
@@ -30,13 +31,13 @@ class Interface extends React.Component {
         title: '序号',
         key: 'idx',
         dataIndex: 'idx',
-        render: (idx) => (idx+1),
+        render: (idx) => (idx + 1),
       },
       {
         title: '接口名称',
         key: 'name',
         dataIndex: 'name',
-        render: (_) => <a>{_}</a>,
+        render: (_) => <a onClick={this.handleView}>{_}</a>,
       },
       {
         title: '接口编号',
@@ -49,8 +50,8 @@ class Interface extends React.Component {
         dataIndex: 'isPublish',
         render: (text, record) => {
           console.log(record)
-          let {isPublish,id} = record
-          switch(isPublish){
+          let { isPublish, id } = record
+          switch (isPublish) {
             case 0:
               text = (<span><span className="ant-badge-status-dot ant-badge-status-default"></span>未发布</span>);
               break;
@@ -63,37 +64,11 @@ class Interface extends React.Component {
             case 3:
               text = (<span><span className="ant-badge-status-dot ant-badge-status-error"></span>异常</span>);
               break;
-              default:text='';
+            default: text = '';
               break
           }
           return text;
-          },
-      //   valueEnum: {
-      //     0: {
-      //       text: (
-      //         "未发布"//<FormattedMessage id="pages.searchTable.nameStatus.default" defaultMessage="未发布" />
-      //       ),
-      //       status: 'Default',
-      //     },
-      //     1: {
-      //       text: (
-      //         "运行中"
-      //       ),
-      //       status: 'Processing',
-      //     },
-      //     2: {
-      //       text: (
-      //         "已生效"//<FormattedMessage id="pages.searchTable.nameStatus.online" defaultMessage="已生效" />
-      //       ),
-      //       status: 'Success',
-      //     },
-      //     3: {
-      //       text: (
-      //         "异常"//<FormattedMessage id="pages.searchTable.nameStatus.abnormal" defaultMessage="异常" />
-      //       ),
-      //       status: 'Error',
-      //     },
-      //   },
+        },
       },
       {
         title: '备注',
@@ -107,23 +82,25 @@ class Interface extends React.Component {
         dataIndex: 'option',
         render: (text, record) => {
           console.log(record)
-          let {isPublish,id} = record
+          let { isPublish, id } = record
           return (<Space size="left">
-            {isPublish?<span key="span1">发布</span>:
-          <a key="link1" onClick={this.handlePublish.bind(this,id)}>发布</a>}
-          {isPublish?
-          <a key="link2" onClick={this.handleDown.bind(this,id)} className="ml10">下线</a>:
-          <span key="span1"className="ml10">下线</span>}
-          <span className="ml10">|</span>
-        <a key="link3" onClick={this.handleEdit} className="ml10">编辑</a>
-        <a key="link4" className="color-red ml10"
-            onClick={this.handleRemove}
-          >删除</a>
-      </Space>)}
-      // [
-      //     <a key="link" onClick={this.handleEdit}>编辑</a>, <a key="link2" className="color-red ml10"
-      //       onClick={this.handleRemove}
-      //     >删除</a>],
+            {isPublish ? <span key="span1">发布</span> :
+              <a key="link1" onClick={this.handlePublish.bind(this, id)}>发布</a>}
+            {isPublish ?
+              <a key="link2" onClick={this.handleDown.bind(this, id)} className="ml10">下线</a> :
+              <span key="span1" className="ml10">下线</span>}
+            {/* <span className="ml10">|</span> */}
+            <div class="ant-divider ant-divider-vertical" role="separator"></div>
+            <a key="link3" onClick={this.handleEdit}>编辑</a>
+            <a key="link4" className="color-red ml10"
+              onClick={this.handleRemove}
+            >删除</a>
+          </Space>)
+        }
+        // [
+        //     <a key="link" onClick={this.handleEdit}>编辑</a>, <a key="link2" className="color-red ml10"
+        //       onClick={this.handleRemove}
+        //     >删除</a>],
       },
     ];
   }
@@ -135,13 +112,19 @@ class Interface extends React.Component {
     this.store.values = {};
     this.setState({
       visible: true,
-      isEdit: false,
+      isEdit: 0,
+    });
+  }
+  handleView() {
+    this.setState({
+      visible: true,
+      isEdit: 2,
     });
   }
   handleEdit() {
     this.setState({
       visible: true,
-      isEdit: true,
+      isEdit: 1,
     });
   }
   handleRemove() {
@@ -167,14 +150,14 @@ class Interface extends React.Component {
     };
     Modal.confirm(config);
   }
-  
+
   async handleSave() {
     let values = this.store.values
     //调用save接口
     let flag
-    if (this.state.isEdit) {
+    if (this.state.isEdit === 1) {
       flag = await this.store.onUpdate(values)
-    } else {
+    } else if (this.state.isEdit === 0) {
       flag = await this.store.onSave(values)
     }
     if (flag) {
@@ -198,15 +181,16 @@ class Interface extends React.Component {
   }
   render() {
     const data = this.store.data;
-    if(this.state.visible){
+    const { isEdit, visible } = this.state;
+    if (visible) {
       return <InterfaceEdit
-      values={this.store.values} validateStatus={this.store.validateStatus}
-      modalTitle={this.state.isEdit ? "编辑" : "新增"}
-     visible={this.state.visible}
-     handleOk={this.handleSave}
-     handleCancel={this.handleCancel}
-      store={this.store} columns={this.store.columns}
-       />
+        isEdit={isEdit}
+        values={this.store.values} validateStatus={this.store.validateStatus}
+        visible={this.state.visible}
+        handleOk={this.handleSave}
+        handleCancel={this.handleCancel}
+        store={this.store} columns={this.store.columns}
+      />
     }
     return (
       <Row>
@@ -217,7 +201,7 @@ class Interface extends React.Component {
         </Col>
         <Row>
           <Col span={24}>
-            <Table columns={this.columns}  scroll={{ x: 'calc(100vw - 280px)' }}
+            <Table columns={this.columns} scroll={{ x: 'calc(100vw - 280px)' }}
               onRow={(record) => {
                 return {
                   onClick: (...ev) => {
@@ -230,7 +214,7 @@ class Interface extends React.Component {
               dataSource={data} />
           </Col>
         </Row>
-          
+
       </Row>
     );
   }

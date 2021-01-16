@@ -11,6 +11,9 @@
 .ant-badge-status-dot{
   margin-right: 5px;
 }
+
+
+
 .color-red,.color-red:hover,.color-red:active{
   color: #f5222d;
 }
@@ -25,4 +28,9 @@
 }
 .fr{
   float: right;
+}
+
+
+.interface .ant-card{
+  margin-bottom: 20px;
 }
