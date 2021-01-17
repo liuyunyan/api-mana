@@ -24,14 +24,15 @@ export default class CodeEdit extends React.Component {
     } = this.props;
 
     this.editor = codemirror(this.ref, {
-      indentWithTabs: true,
-      smartIndent: true,
+      indentWithTabs: true,// 使用制表符进行智能缩进
+      smartIndent: true, //智能缩进
       lineNumbers: true,
-      matchBrackets: true,
-      autofocus: true,
+      matchBrackets: true,//匹配结束符号，比如"]、}"
+      autofocus: false,
       extraKeys: { Tab: 'autocomplete' },
       hintOptions: { completeSingle: false },
-      lineWrapping: true,
+      autoCloseBrackets: true , // 自动闭合符号
+      lineWrapping: true,// 在行槽中添加行号显示器、折叠器、语法检测器`
       value
     });
     const { editor, setCursor } = this;

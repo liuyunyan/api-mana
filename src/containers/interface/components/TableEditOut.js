@@ -158,7 +158,6 @@ class TableEdit extends React.Component {
   isEditing = (record) => record.key === this.state.editingKey;
 
   render() {
-    console.log(222)
     const key = this.props.key;
     const data = this.store.outputList//[key]
     return (

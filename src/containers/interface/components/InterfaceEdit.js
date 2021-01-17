@@ -11,13 +11,6 @@ import CodeEdit from './CodeEdit';
 
 const { Option } = Select;
 
-const tailLayout = {
-  wrapperCol: {
-    offset: 8,
-    span: 16,
-  },
-};
-
 @observer
 class InterfaceEdit extends React.Component {
   constructor(props) {
@@ -162,6 +155,20 @@ class InterfaceEdit extends React.Component {
 
 
   //sql
+  getDBList = () => {
+    let dbList = this.store.dbList
+    return dbList
+  }
+  getTableList = () => {
+    let tableList = this.store.tableList
+    return tableList
+  }
+  onChangeSql = (sql) => {
+    //sql
+    this.setValue("sql", sql)
+
+  }
+
   onCursorActivity = (cm) => {
     if (!cm.getSelection()) {
       console.log(cm.getSelection()); // 获取到选中部分内容，用来实现执行部分内容
@@ -169,24 +176,24 @@ class InterfaceEdit extends React.Component {
   };
 
   onInputRead = async (cm, change, editor) => {
-    // const { text } = change;
-    // const dechars = ['.'];
-    // const autocomplete = dechars.includes(text[0]);
-    // if (autocomplete) {
-    //   const data = getTableList(); // 获取库表列表
-    //   editor.setOption('hintOptions', {
-    //     tables: data,
-    //     completeSingle: false,
-    //   });
-    //   cm.execCommand('autocomplete');
-    // } else {
-    //   const tableName = getTableList(); // 获取表列表
-    //   editor.setOption('hintOptions', {
-    //     tables: tableName,
-    //     completeSingle: false,
-    //   });
-    // }
-    // cm.execCommand('autocomplete');
+    const { text } = change;
+    const dechars = ['.'];
+    const autocomplete = dechars.includes(text[0]);
+    if (autocomplete) {
+      const data = this.getDBList(); // 获取库表列表
+      editor.setOption('hintOptions', {
+        tables: data,
+        completeSingle: false,
+      });
+      cm.execCommand('autocomplete');
+    } else {
+      const tableName = this.getTableList(); // 获取表列表
+      editor.setOption('hintOptions', {
+        tables: tableName,
+        completeSingle: false,
+      });
+    }
+    cm.execCommand('autocomplete');
   };
 
 
@@ -248,7 +255,7 @@ class InterfaceEdit extends React.Component {
               <Input
                 readOnly={readOnly}
                 onChange={this.handleInputChange.bind(this, col)}
-                value={value} placeholder={"请输入"} />
+                value={value} placeholder={col.placeholder || "请输入"} />
             </Form.Item>
           </Col>
 
@@ -362,32 +369,34 @@ class InterfaceEdit extends React.Component {
             <TableEditOut key={"outputList"} store={this.store} />
           </Card>
           <Card type="inner" title="SQL 语句">
-            {/* <CodeEdit
+            <CodeEdit
               // className="sql"
               value={sqlValue}
               paste={sqlPaste}
               options={{ readOnly: false }}
               onChange={(sql) => {
                 console.log(sql)
-                // this.onChange(sql);
+                this.onChangeSql(sql);
               }}// sql变化事件
               onCursorActivity={(cm) => this.onCursorActivity(cm)} // 用来完善选中监听
               onInputRead={
                 // 自动补全
                 (cm, change, editor) => this.onInputRead(cm, change, editor)
               }
-            /> */}
+            />
           </Card>
         </Card>
-
-        <Form.Item {...tailLayout}>
-          <Button htmlType="button" onClick={this.props.handleCancel}>
-            取消
+        <Row className='button-group'>
+          <Col flex="1 1 200px"></Col>
+          <Col flex="0 1 300px">
+            <Button htmlType="button" onClick={this.props.handleCancel}>
+              取消
         </Button>
-          <Button type="primary" htmlType="button" onClick={this.handleOk}>
-            提交
+            <Button type="primary" htmlType="button" onClick={this.handleOk}>
+              保存
         </Button>
-        </Form.Item>
+          </Col>
+        </Row>
       </Form>
 
     );

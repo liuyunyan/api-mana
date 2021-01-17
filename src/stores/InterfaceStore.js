@@ -41,7 +41,7 @@ export default class InterfaceStore {
       { title: "DELETE", value: "DELETE" }
       ]
     },
-    { key: "URL", label: "URL", type: "String", validate: { required: true } ,readOnly:true},
+    { key: "URL", label: "URL", type: "String", validate: { required: false } ,readOnly:true,placeholder:'保存后自动生成'},
     { key: "datasourceId", label: "数据源", type: "Refer", validate: { required: true } },
     { key: "dbName", label: "数据库", type: "Refer", validate: { required: true } },
   ];
@@ -406,7 +406,7 @@ export default class InterfaceStore {
       .then((res) => {
         if (res.errno === 200) {
           res.data = res.data.map((val, index) => {
-            let vals = {key:val,title:val,id:id}
+            let vals = {key:val,title:val,id:id,text:val}
             // val.key = val;
             // val.title = val;
             // val.id = id;
@@ -434,6 +434,7 @@ export default class InterfaceStore {
             val.key = val.tableName;
             val.title = val.tableName;
             val.dbName = dbName;
+            val.text = val.tableName;
             val.id = id;
             return val;
           })

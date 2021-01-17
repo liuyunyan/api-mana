@@ -30,7 +30,7 @@ class App extends Component {
     };
   }
   onCollapse = (collapsed) => {
-    console.log(collapsed);
+    // console.log(collapsed);
     this.setState({ collapsed });
   };
   render() {
@@ -107,9 +107,9 @@ class App extends Component {
                 <HomeApp />
               </div>
             </Content>
-            <Footer style={{ textAlign: "center" }}>
+            {/* <Footer style={{ textAlign: "center" }}>
               Ant Design ©2018 Created by Ant UED
-          </Footer>
+          </Footer> */}
           </Layout>
         </Layout>
       </ConfigProvider>
