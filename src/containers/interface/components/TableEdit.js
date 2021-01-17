@@ -158,7 +158,7 @@ class TableEdit extends React.Component {
   isEditing = (record) => record.key === this.state.editingKey;
 
   render() {
-    const key = this.props.key;
+    const field = this.props.field;
     const data = this.store.inputList//[key]
     return (
       <Form component={false} ref={this.formRef} name="table-ref" 
@@ -170,6 +170,7 @@ class TableEdit extends React.Component {
           },
         }}
         bordered
+        rowKey='columnName'
         dataSource={data}
         columns={this.mergedColumns}
         rowClassName="editable-row"

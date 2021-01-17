@@ -170,6 +170,7 @@ class TableEdit extends React.Component {
           },
         }}
         bordered
+        rowKey='columnName'
         dataSource={data}
         columns={this.mergedColumns}
         rowClassName="editable-row"

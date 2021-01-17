@@ -6,7 +6,7 @@ export default class InterfaceStore {
   constructor() {
     makeAutoObservable(this);
   }
-
+  saveData={};
   data = []; //
   sourceList = []; //
   dbList = []; //
@@ -20,7 +20,7 @@ export default class InterfaceStore {
     // { key: "username", label: "用户名", type: "String", validate: { required: true } },
     // { key: "password", label: "密码", type: "String", validate: { required: true } },
     {
-      key: "mark", label: "备注", type: "TextArea", validate: {
+      key: "remarks", label: "备注", type: "TextArea", validate: {
         required: false,
         customer: (value) => {
           if (value.length >= 5) {
@@ -41,7 +41,7 @@ export default class InterfaceStore {
       { title: "DELETE", value: "DELETE" }
       ]
     },
-    { key: "URL", label: "URL", type: "String", validate: { required: false } ,readOnly:true,placeholder:'保存后自动生成'},
+    { key: "requestUrl", label: "requestUrl", type: "String", validate: { required: false } ,readOnly:true,placeholder:'保存后自动生成'},
     { key: "datasourceId", label: "数据源", type: "Refer", validate: { required: true } },
     { key: "dbName", label: "数据库", type: "Refer", validate: { required: true } },
   ];
@@ -215,7 +215,8 @@ export default class InterfaceStore {
     axios(reqconfig)
       .then((res) => {
         if (res.errno === 200) {
-          this.values = Object.assign({}, res.data);
+          // this.values = Object.assign({}, res.data);
+          this.afterQuery(res.data)
         } else {
           message.error(res.errmsg)
         }
@@ -225,6 +226,7 @@ export default class InterfaceStore {
         message.error('数据请求失败')
       });
   }
+ 
 
   validateValue(value) {
     let columns = this.columns;
@@ -266,14 +268,40 @@ export default class InterfaceStore {
     })
     return flag
   }
+  formatSaveData() {
+    let{values,inputList,outputList} = this;
+    let saveData = Object.assign({},this.saveData)
+    saveData = Object.assign({},values)
+    saveData.inputParameter={parmDTOList:inputList}
+    saveData.outputParameter={parmDTOList:outputList}
+    // console.log(saveData)
+    return saveData;
 
-  onSave(data) {
+  }
+  afterQuery(saveData){
+    let {id,dbName} = saveData
+    if(!saveData.datasourceName&&saveData.outputParameter.parmDTOList.length>0){
+      saveData.datasourceName = saveData.outputParameter.parmDTOList[0].datasourceName
+    }
+    this.queryDBList(id)
+    this.queryDBTables(id,dbName)
+    this.values = Object.assign({}, saveData);
+    console.log(this.values);
+    this.saveData = Object.assign({}, saveData);
+    this.inputList = Object.assign([], saveData.inputParameter.parmDTOList);
+    this.outputList = Object.assign([], saveData.outputParameter.parmDTOList);
+    
+
+  }
+
+  onSave() {
     this.validateValue()
     let flag = this.beforeSave()
     if (flag) {
       message.error("校验失败")
       return false
     }
+    let data = this.formatSaveData()
     let reqconfig = {
       method: "POST",
       url: Config.interface.add,
@@ -292,13 +320,14 @@ export default class InterfaceStore {
         message.error('数据请求失败')
       });
   }
-  onUpdate(data) {
+  onUpdate() {
     this.validateValue()
     let flag = this.beforeSave()
     if (flag) {
       message.error("校验失败")
       return false
     }
+    let data = this.formatSaveData()
     let reqconfig = {
       method: "PUT",
       url: Config.interface.update,

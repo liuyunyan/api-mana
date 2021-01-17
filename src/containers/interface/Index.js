@@ -87,7 +87,7 @@ class Interface extends React.Component {
               <a key="link2" onClick={this.handleDown.bind(this, id)} className="ml10">下线</a> :
               <span key="span1" className="ml10">下线</span>}
             {/* <span className="ml10">|</span> */}
-            <div class="ant-divider ant-divider-vertical" role="separator"></div>
+            <div className="ant-divider ant-divider-vertical" role="separator"></div>
             <a key="link3" onClick={this.handleEdit}>编辑</a>
             <a key="link4" className="color-red ml10"
               onClick={this.handleRemove}
@@ -145,18 +145,19 @@ class Interface extends React.Component {
   }
 
   async handleSave() {
-    let values = this.store.values
+    // let values = this.store.values
     //调用save接口
     let flag
-    if (this.state.isEdit === 1) {
-      flag = await this.store.onUpdate(values)
-    } else if (this.state.isEdit === 0) {
-      flag = await this.store.onSave(values)
+    if (this.state.isEdit === 1) {//编辑
+      flag = await this.store.onUpdate()
+    } else if (this.state.isEdit === 0) {//新增
+      flag = await this.store.onSave()
     }
     if (flag) {
       message.success("保存成功")
-      this.store.queryList()
-      this.setState({
+      this.store.queryByid()
+      // this.state.isEdit === 1 &&
+       this.setState({
         visible: false,
       });
       this.store.validates = {}

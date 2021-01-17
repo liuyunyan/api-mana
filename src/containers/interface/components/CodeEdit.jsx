@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import codemirror from 'codemirror';
-// import { debounce } from 'lodash.debounce';
+import _ from 'lodash';
 
 require('codemirror/lib/codemirror.css'); // CodeMirrory原生样式
 require('codemirror/mode/sql/sql');
@@ -38,11 +38,11 @@ export default class CodeEdit extends React.Component {
     const { editor, setCursor } = this;
 
     setCursor(editor, true);
-    // const changeDelay = debounce((e) => {
-    //   setCursor(e);
-    //   onChange && onChange(e.getValue());
-    // }, 300);
-    // editor.on('change', changeDelay);
+    const changeDelay = _.debounce((e) => {
+      setCursor(e);
+      onChange && onChange(e.getValue());
+    }, 300);
+    editor.on('change', changeDelay);
     editor.on('blur', (e) => {
       setCursor(e);
       onBlur && onBlur(e.getValue());

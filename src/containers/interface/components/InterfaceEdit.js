@@ -67,6 +67,10 @@ class InterfaceEdit extends React.Component {
   }
 
   componentDidMount() {
+    if(this.props.isEdit !== 0){
+      this.store.queryByid()
+      // this
+    }
     this.store.querySource()
     // this.setState(this.props.values)
   }
@@ -149,7 +153,7 @@ class InterfaceEdit extends React.Component {
   addOutput(field, tableName) {
     let { datasourceId, datasourceName, dbName } = this.store.values;
     let row = { columnName: field, datasourceId, dbName, datasourceName, alias: field, tableName }
-    console.log(row)
+    // console.log(row)
     this.store.setTables("outputList", row, 'add')
   }
 
@@ -171,7 +175,7 @@ class InterfaceEdit extends React.Component {
 
   onCursorActivity = (cm) => {
     if (!cm.getSelection()) {
-      console.log(cm.getSelection()); // 获取到选中部分内容，用来实现执行部分内容
+      // console.log(cm.getSelection()); // 获取到选中部分内容，用来实现执行部分内容
     }
   };
 
@@ -330,7 +334,8 @@ class InterfaceEdit extends React.Component {
   render() {
     let { columns, InterColumns } = this.props;
     let { values, validates, tableList, fieldsList, inputList, outputList } = this.store;
-    let { sqlValue, sqlPaste } = this.state;
+    let { sqlPaste } = this.state;
+    const _sqlValues = values.sql;
     return (
       <Form className="interface" // {...layout} name="control-hooks" //onFinish={this.onFinish}
       >
@@ -356,26 +361,25 @@ class InterfaceEdit extends React.Component {
                       }
                     }
                   }}
-                  rowKey='id'
+                  rowKey='columnName'
                   dataSource={fieldsList} />
               </Col>
 
             </Row>
           </Card>
           <Card type="inner" title="输入参数">
-            <TableEdit key={"inputList"} store={this.store} />
+            <TableEdit field={"inputList"} store={this.store} />
           </Card>
           <Card type="inner" title="返回值">
-            <TableEditOut key={"outputList"} store={this.store} />
+            <TableEditOut field={"outputList"} store={this.store} />
           </Card>
           <Card type="inner" title="SQL 语句">
             <CodeEdit
               // className="sql"
-              value={sqlValue}
+              value={_sqlValues}
               paste={sqlPaste}
               options={{ readOnly: false }}
               onChange={(sql) => {
-                console.log(sql)
                 this.onChangeSql(sql);
               }}// sql变化事件
               onCursorActivity={(cm) => this.onCursorActivity(cm)} // 用来完善选中监听
