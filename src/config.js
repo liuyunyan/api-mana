@@ -18,7 +18,7 @@ const Config = {
         queryDetail: `${serverUrl}/thirdPartyPlatform/`,
         update: `${serverUrl}/thirdPartyPlatform`,
         delete: `${serverUrl}/thirdPartyPlatform/`,
-        connection: `${serverUrl}/thirdPartyPlatform/connection`,
+        generateAPIKey: `${serverUrl}/thirdPartyPlatform/generateAPIKey`,
     },
     user: {
         login:`${serverUrl}/user/login`,

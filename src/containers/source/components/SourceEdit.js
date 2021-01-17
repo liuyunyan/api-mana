@@ -45,9 +45,7 @@ class SourceEdit extends React.Component {
     let key = col.key
     let value = event.target.value.trim()
     let flag = this.validateValue(col, value)
-    if (flag) {
-      this.setValue(key, value)
-    }
+    this.setValue(key, value)
   }
   onSelectChange = (col, value) => {
     let key = col.key

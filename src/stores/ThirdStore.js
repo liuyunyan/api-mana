@@ -12,10 +12,10 @@ export default class ThirdStore {
     { key: "name", label: "平台名称", type: "String", validate: { required: true } },
     { key: "username", label: "平台账号", type: "String", validate: { required: true } },
     { key: "interfaceId", label: "授权接口", type: "Number", validate: { required: true } },
-    { key: "apiKey", label: "APIKey", type: "String", validate: { required: true },placeholder:"点击右侧按钮生成" },
+    { key: "apiKey", label: "APIKey", type: "String", validate: { required: true }, placeholder: "点击右侧按钮生成" },
     {
       key: "remarks", label: "备注", type: "TextArea", validate: {
-        required: false, 
+        required: false,
         customer: (value) => {
           if (value.length >= 5) {
             return true
@@ -83,7 +83,7 @@ export default class ThirdStore {
         }
       }
       if (validate.customer && typeof validate.customer === 'function') {
-        if(!value){
+        if (!value) {
           value = ""
         }
         let flag = validate.customer(value)
@@ -179,7 +179,23 @@ export default class ThirdStore {
       });
   }
   onCreat() {
-    //
-    message.info('apiKey')
+    let reqconfig = {
+      method: "GET",
+      url: Config.third.generateAPIKey,
+    };
+    return axios(reqconfig)
+      .then((res) => {
+        if (res.errno === 200) {
+          this.values.apiKey = res.data
+          message.success("生成成功")
+          return true
+        } else {
+          message.error(res.errmsg)
+        }
+      })
+      .catch((err) => {
+        console.log(err)
+        message.error('数据请求失败')
+      });
   }
 }
