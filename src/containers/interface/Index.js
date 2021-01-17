@@ -80,7 +80,7 @@ class Interface extends React.Component {
         dataIndex: 'option',
         render: (text, record) => {
           let { isPublish, id } = record
-          return (<Space size="left">
+          return (<Space>
             {isPublish ? <span key="span1">发布</span> :
               <a key="link1" onClick={this.handlePublish.bind(this, id)}>发布</a>}
             {isPublish ?

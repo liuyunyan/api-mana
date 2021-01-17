@@ -26,6 +26,7 @@ const Config = {
         queryDetail: `${serverUrl}/external/interface/`,
         update: `${serverUrl}/external/interface`,
         delete: `${serverUrl}/external/interface/`,
+        queryDBs: `${serverUrl}/external/listDatabases/`,
         queryDBTables: `${serverUrl}/external/listTables/`,
         queryDBFileds: `${serverUrl}/external/getTableSchema/`,
         publish: `${serverUrl}external/interface/publish/`,

@@ -61,11 +61,12 @@ class InterfaceEdit extends React.Component {
         width: '180px',
         key: 'option',
         dataIndex: 'option',
-        render: (text,record) => [
-          <a key="link" onClick={this.addInput.bind(this,record.name)}>+输入参数</a>,
+        render: (text, record) => {
+        return [
+          <a key="link" onClick={this.addInput.bind(this, record.name, record.tableName)}>+输入参数</a>,
           <a key="link2" className="color-red ml10"
-            onClick={this.addOutput.bind(this,record.name)}
-          >+返回值</a>],
+            onClick={this.addOutput.bind(this, record.name, record.tableName)}
+          >+返回值</a>]}
       },
     ];
   }
@@ -90,17 +91,17 @@ class InterfaceEdit extends React.Component {
       this.setValue(key, value)
     }
   };
-  onReferChange = (col, value) => {
+  onReferChange = (col, value, option) => {
     let key = col.key
     let flag = this.validateValue(col, value)
     if (flag) {
       this.setValue(key, value)
       if (key === "datasourceId") {
+        this.setValue("datasourceName", option.children)
         this.store.queryDBList(value)
       } else if (key === "dbName") {
-        this.store.queryDBTables(value)
+        this.store.queryDBTables(option.id, value)
       }
-
     }
   };
 
@@ -144,25 +145,17 @@ class InterfaceEdit extends React.Component {
   }
 
   //fieldsTable
-  addInput(field) {
-
-    // let field = this.state.fieldsValues.name;
-    let datasourceId = this.store.values.datasourceId;
-    let datasourceName = this.store.values.datasourceId;
-    let dbName = this.store.values.dbName;
-    console.log(field)
-    // return
-    let row = { columnName: field, datasourceId, dbName, datasourceName, alias: field }
-    this.store.inputList.push(row)
+  addInput(field, tableName) {
+    let { datasourceId, datasourceName, dbName } = this.store.values;
+    let row = { columnName: field, datasourceId, dbName, datasourceName, alias: field, tableName }
+    // console.log(row)
+    this.store.setTables("inputList",row,true)
   }
-  addOutput(field) { 
-    let datasourceId = this.store.values.datasourceId;
-    let datasourceName = this.store.values.datasourceId;
-    let dbName = this.store.values.dbName;
-    console.log(field)
-    // return
-    let row = { columnName: field, datasourceId, dbName, datasourceName, alias: field }
-    this.store.outputList.push(row)
+  addOutput(field) {
+    // let { datasourceId, datasourceName, dbName } = this.store.values;
+    // let row = { columnName: field, datasourceId, dbName, datasourceName, alias: field, tableName }
+    // console.log(row)
+    // this.store.setTables("outputList",row,true)
   }
 
 
@@ -230,7 +223,7 @@ class InterfaceEdit extends React.Component {
               >
                 {dataSource.map((val, i) => {
                   return (
-                    <Option key={i} value={val.key}>
+                    <Option key={i} value={val.key} id={val.id}>
                       {val.title}
                     </Option>
                   );
@@ -327,7 +320,7 @@ class InterfaceEdit extends React.Component {
 
   render() {
     let { columns, InterColumns } = this.props;
-    let { values, validates, dbList, fieldsList, inputList, outputList } = this.store;
+    let { values, validates, tableList, fieldsList, inputList, outputList } = this.store;
     let { sqlValue, sqlPaste } = this.state;
     return (
       <Form className="interface" // {...layout} name="control-hooks" //onFinish={this.onFinish}
@@ -342,7 +335,7 @@ class InterfaceEdit extends React.Component {
           <Card type="inner" title="引用数据">
             <Row gutter={24}>
               <Col span={4} order={1} style={{ borderRight: "1px #ccc solid" }}>
-                <AsyncTree treeData={dbList} queryDBFileds={this.queryDBFileds}
+                <AsyncTree treeData={tableList} queryDBFileds={this.queryDBFileds}
                 />
               </Col>
               <Col span={20} order={2}>

@@ -1,13 +1,16 @@
 import React from "react";
 import { observer } from "mobx-react";
-import { Table, Input, Form,Typography } from "antd";
+import { Table, Input, Form,Typography,Space } from "antd";
+import { FormInstance } from 'antd/lib/form';
 
 @observer
 class TableEdit extends React.Component {
+  formRef = React.createRef();
   constructor(props) {
     super(props);
+    this.store = this.props.store;
     this.state = {
-      editingKey:'',
+      editingKey:''
     };
     this.initColumn()
   }
@@ -45,7 +48,7 @@ class TableEdit extends React.Component {
         </td>
       );
     };
-    const columns = [
+    this.columns = [
       {
         title: '数据源',
         dataIndex: 'datasourceName',
@@ -85,34 +88,34 @@ class TableEdit extends React.Component {
         render: (_, record) => {
           const editable = this.isEditing(record);
           return editable ? (
-            <span>
+            <Space size="middle">
               <a
                 href="javascript:;"
-                onClick={() => this.save(record.key)}
-                style={{
-                  marginRight: 8,
-                }}
+                onClick={() => this.save(record.columnName)}
               >
                 保存
               </a>
               <a
                 href="javascript:;"
-                onClick={() => this.cancel(record.key)}
+                onClick={() => this.cancel(record.columnName)}
               >
                 取消
               </a>
-            </span>
-          ) : (
+              </Space>
+          ) : (<Space size="middle">
             <Typography.Link disabled={this.state.editingKey !== ''} onClick={() => this.edit(record)}>
               编辑
-            </Typography.Link>,<Typography.Link disabled={this.state.editingKey !== ''} onClick={() => this.remove(record)}>
+            </Typography.Link>
+            <Typography.Link disabled={this.state.editingKey !== ''} onClick={() => this.remove(record)}>
               删除
             </Typography.Link>
+            </Space>
+            
           );
         },
       },
     ];
-    this.mergedColumns = columns.map((col) => {
+    this.mergedColumns = this.columns.map((col) => {
       if (!col.editable) {
         return col;
       }
@@ -137,13 +140,31 @@ class TableEdit extends React.Component {
     
   }
 
+  edit = (record) => {
+  this.formRef.current.setFieldsValue({...record});
+    this.setState({editingKey:record.key})
+  };
+  cancel = () => {
+    this.setState({editingKey:''})
+  };
+  remove=()=> {
+    
+  }
+ 
+  save = (columnName) => {
+    let values = this.formRef.current.getFieldValue()
+    // console.log(columnName,values)
+    this.store.setTables("inputList",values)
+    this.setState({editingKey:''})
+  };
   isEditing = (record) => record.key === this.state.editingKey;
 
   render() {
+    console.log(222)
     const key = this.props.key;
-    const data = this.props.store[key]
+    const data = this.store.inputList//[key]
     return (
-      <Form component={false} // form={form} 
+      <Form component={false}  ref={this.formRef} name="table-ref" 
       >
       <Table
         components={{

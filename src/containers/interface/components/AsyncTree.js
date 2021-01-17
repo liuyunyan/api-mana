@@ -35,12 +35,11 @@ class AsyncTree extends React.Component {
     // });
   }
   onSelect = (selectedKeys,e) => {
-    console.log('selectedKeys',selectedKeys);
-    console.log(e.selectedNodes)
     if(selectedKeys.length>0 ){
-      let tableName = selectedKeys
+      let tableName = selectedKeys[0]
       let id = e.selectedNodes[0].id
-      this.props.queryDBFileds(id,tableName)
+      let dbName = e.selectedNodes[0].dbName
+      this.props.queryDBFileds(id,dbName,tableName)
     }
   }
   // onLoadData = (treeNode) => {
@@ -82,7 +81,7 @@ class AsyncTree extends React.Component {
           </TreeNode>
         );
       }
-      return <TreeNode key={item.key} title={title} id={item.id} />;
+      return <TreeNode key={item.key} title={title} id={item.id} dbName={item.dbName} />;
     });
     return (
       <Tree

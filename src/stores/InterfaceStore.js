@@ -400,16 +400,17 @@ export default class InterfaceStore {
   queryDBList(id) {
     let reqconfig = {
       method: "GET",
-      url: Config.interface.queryDBTables + id,
+      url: Config.interface.queryDBs + id,
     };
     axios(reqconfig)
       .then((res) => {
         if (res.errno === 200) {
           res.data = res.data.map((val, index) => {
-            val.key = val.tableName;//val.dbName||
-            val.title = val.tableName;
-            val.id = id;
-            return val;
+            let vals = {key:val,title:val,id:id}
+            // val.key = val;
+            // val.title = val;
+            // val.id = id;
+            return vals;
           })
           this.dbList = Object.assign([], res.data);
         } else {
@@ -421,17 +422,18 @@ export default class InterfaceStore {
         message.error('数据请求失败')
       });
   }
-  queryDBTables(id) {
+  queryDBTables(id,dbName) {
     let reqconfig = {
       method: "GET",
-      url: Config.interface.queryDBTables + id,
+      url: Config.interface.queryDBTables + id+`?dbName=${dbName}`,
     };
     axios(reqconfig)
       .then((res) => {
         if (res.errno === 200) {
           res.data = res.data.map((val, index) => {
-            val.key = val.tableName;//val.dbName||
+            val.key = val.tableName;
             val.title = val.tableName;
+            val.dbName = dbName;
             val.id = id;
             return val;
           })
@@ -445,15 +447,19 @@ export default class InterfaceStore {
         message.error('数据请求失败')
       });
   }
-  queryDBFileds(id, tableName) {
+  queryDBFileds(id, dbName,tableName) {
     let reqconfig = {
       method: "GET",
-      url: Config.interface.queryDBFileds + id + `?tableName=${tableName}`,
+      url: Config.interface.queryDBFileds + id + `?dbName=${dbName}&tableName=${tableName}`,
     };
     axios(reqconfig)
       .then((res) => {
         if (res.errno === 200) {
           let fieldsList = res.data.fields;
+          fieldsList = fieldsList.map((val,index)=>{
+            val.tableName = tableName
+            return val
+          })
           this.fieldsList = Object.assign([], fieldsList);
         } else {
           message.error(res.errmsg)
@@ -464,4 +470,30 @@ export default class InterfaceStore {
         message.error('数据请求失败')
       });
   }
+
+  setTables(key,row,isAdd) {
+    let tableList = this[key]
+    let oldRow = tableList.find((val,index)=>{
+      if(val.columnName === row.columnName){
+        return true
+      }
+      return false
+    })
+    if(isAdd){
+
+    }
+    if(oldRow){
+      if(isAdd){
+        message.error(row.columnName+"已存在")
+        return
+      }else{
+        oldRow = Object.assign(oldRow,row)
+      }
+    }else{
+      tableList.push(row)
+    }
+    this[key]=Object.assign([],tableList)
+  }
+
+
 }
