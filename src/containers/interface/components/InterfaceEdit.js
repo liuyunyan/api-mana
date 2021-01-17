@@ -6,6 +6,7 @@ import { observer } from "mobx-react";
 import { Form, Input, Select, InputNumber, Button, Row, Col, Card, Table } from "antd";
 import AsyncTree from './AsyncTree';
 import TableEdit from './TableEdit';
+import TableEditOut from './TableEditOut';
 import CodeEdit from './CodeEdit';
 
 const { Option } = Select;
@@ -62,11 +63,12 @@ class InterfaceEdit extends React.Component {
         key: 'option',
         dataIndex: 'option',
         render: (text, record) => {
-        return [
-          <a key="link" onClick={this.addInput.bind(this, record.name, record.tableName)}>+输入参数</a>,
-          <a key="link2" className="color-red ml10"
-            onClick={this.addOutput.bind(this, record.name, record.tableName)}
-          >+返回值</a>]}
+          return [
+            <a key="link" onClick={this.addInput.bind(this, record.name, record.tableName)}>+输入参数</a>,
+            <a key="link2" className="color-red ml10"
+              onClick={this.addOutput.bind(this, record.name, record.tableName)}
+            >+返回值</a>]
+        }
       },
     ];
   }
@@ -149,13 +151,13 @@ class InterfaceEdit extends React.Component {
     let { datasourceId, datasourceName, dbName } = this.store.values;
     let row = { columnName: field, datasourceId, dbName, datasourceName, alias: field, tableName }
     // console.log(row)
-    this.store.setTables("inputList",row,true)
+    this.store.setTables("inputList", row, 'add')
   }
-  addOutput(field) {
-    // let { datasourceId, datasourceName, dbName } = this.store.values;
-    // let row = { columnName: field, datasourceId, dbName, datasourceName, alias: field, tableName }
-    // console.log(row)
-    // this.store.setTables("outputList",row,true)
+  addOutput(field, tableName) {
+    let { datasourceId, datasourceName, dbName } = this.store.values;
+    let row = { columnName: field, datasourceId, dbName, datasourceName, alias: field, tableName }
+    console.log(row)
+    this.store.setTables("outputList", row, 'add')
   }
 
 
@@ -354,10 +356,10 @@ class InterfaceEdit extends React.Component {
             </Row>
           </Card>
           <Card type="inner" title="输入参数">
-            <TableEdit key={"inputList"} field={"inputList"} store={this.store} />
+            <TableEdit key={"inputList"} store={this.store} />
           </Card>
           <Card type="inner" title="返回值">
-            <TableEdit key={"outputList"} field={"outputList"} store={this.store} />
+            <TableEditOut key={"outputList"} store={this.store} />
           </Card>
           <Card type="inner" title="SQL 语句">
             {/* <CodeEdit

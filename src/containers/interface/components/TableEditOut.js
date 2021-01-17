@@ -147,12 +147,12 @@ class TableEdit extends React.Component {
     this.setState({editingKey:''})
   };
   remove=(values)=> {
-    this.store.setTables("inputList",values,'remove')
+    this.store.setTables("outputList",values,'remove')
   }
  
   save = () => {
     let values = this.formRef.current.getFieldValue()
-    this.store.setTables("inputList",values)
+    this.store.setTables('outputList',values)
     this.setState({editingKey:''})
   };
   isEditing = (record) => record.key === this.state.editingKey;
@@ -160,7 +160,7 @@ class TableEdit extends React.Component {
   render() {
     console.log(222)
     const key = this.props.key;
-    const data = this.store.inputList//[key]
+    const data = this.store.outputList//[key]
     return (
       <Form component={false} ref={this.formRef} name="table-ref" 
       >

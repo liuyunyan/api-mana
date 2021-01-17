@@ -471,21 +471,22 @@ export default class InterfaceStore {
       });
   }
 
-  setTables(key,row,isAdd) {
+  setTables(key,row,addOrRemove) {
     let tableList = this[key]
+    let currentIndex = -1;
     let oldRow = tableList.find((val,index)=>{
       if(val.columnName === row.columnName){
+        currentIndex = index
         return true
       }
       return false
     })
-    if(isAdd){
-
-    }
     if(oldRow){
-      if(isAdd){
+      if(addOrRemove==="add"){
         message.error(row.columnName+"已存在")
         return
+      }else if(addOrRemove === 'remove'){
+        tableList.splice(currentIndex,1)
       }else{
         oldRow = Object.assign(oldRow,row)
       }
