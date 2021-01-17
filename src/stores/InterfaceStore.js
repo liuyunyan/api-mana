@@ -8,6 +8,10 @@ export default class InterfaceStore {
   }
 
   data = []; //
+  sourceList = []; //
+  dbList = []; //
+  tableList = []; //
+  fieldsList = []; //
   columns = [
     { key: "name", label: "接口名称", type: "String", validate: { required: true } },
     { key: "identifier", label: "接口编号", type: "String", validate: { required: true }, defaultValue: "MYSQL", EnumData: [{ title: "MYSQL", value: "MYSQL" }, { title: "pg", value: "pg" }] },
@@ -17,7 +21,7 @@ export default class InterfaceStore {
     // { key: "password", label: "密码", type: "String", validate: { required: true } },
     {
       key: "mark", label: "备注", type: "TextArea", validate: {
-        required: false, 
+        required: false,
         customer: (value) => {
           if (value.length >= 5) {
             return true
@@ -28,14 +32,29 @@ export default class InterfaceStore {
       }, placeholder: "请输入至少5个字符"
     },
   ]; //
+  InterColumns = [
+    {
+      key: "type", label: "接口类型", type: "Enum", validate: { required: true }, defaultValue: "POST",
+      EnumData: [{ title: "POST", value: "POST" },
+      { title: "GET", value: "GET" },
+      { title: "PUT", value: "PUT" },
+      { title: "DELETE", value: "DELETE" }
+      ]
+    },
+    { key: "URL", label: "URL", type: "String", validate: { required: true } ,readOnly:true},
+    { key: "datasourceId", label: "数据源", type: "Refer", validate: { required: true } },
+    { key: "dbName", label: "数据库", type: "Refer", validate: { required: true } },
+  ];
   values = {};
   validates = {}
+  inputList=[]
+  outputList=[]
 
   //获取表格的列模型
   queryList() {
     let reqconfig = {
       method: "GET",
-      url: Config.interface.query+`?pageNum=${1}&pageSize=${10}`,
+      url: Config.interface.query + `?pageNum=${1}&pageSize=${10}`,
     };
     return axios(reqconfig)
       .then((res) => {
@@ -97,7 +116,7 @@ export default class InterfaceStore {
                   ]
                 },
                 "sql": "select * from table1",
-                "isPublish":0,
+                "isPublish": 0,
                 "remarks": "??1",
                 "createTime": 1610612718000,
                 "updateTime": 1610612718000
@@ -148,7 +167,7 @@ export default class InterfaceStore {
                   ]
                 },
                 "sql": "select * from table1",
-                "isPublish":1,
+                "isPublish": 1,
                 "remarks": "??1",
                 "createTime": 1610612718000,
                 "updateTime": 1610612718000
@@ -173,7 +192,7 @@ export default class InterfaceStore {
           "debug": null
         }
         if (res.errno === 200) {
-          res.data.list = res.data.list.map((item,index)=>{
+          res.data.list = res.data.list.map((item, index) => {
             item.idx = index
             return item;
           })
@@ -222,7 +241,7 @@ export default class InterfaceStore {
         }
       }
       if (validate.customer && typeof validate.customer === 'function') {
-        if(!value){
+        if (!value) {
           value = ""
         }
         let flag = validate.customer(value)
@@ -320,7 +339,7 @@ export default class InterfaceStore {
   onPublish(id) {
     let reqconfig = {
       method: "GET",
-      url: Config.interface.publish+`${id}?isPublish=true`,
+      url: Config.interface.publish + `${id}?isPublish=true`,
     };
     axios(reqconfig)
       .then((res) => {
@@ -338,12 +357,104 @@ export default class InterfaceStore {
   onDown(id) {
     let reqconfig = {
       method: "GET",
-      url: Config.interface.publish+`${id}?isPublish=false`,
+      url: Config.interface.publish + `${id}?isPublish=false`,
     };
     axios(reqconfig)
       .then((res) => {
         if (res.errno === 200) {
           message.success("下线成功")
+        } else {
+          message.error(res.errmsg)
+        }
+      })
+      .catch((err) => {
+        console.log(err)
+        message.error('数据请求失败')
+      });
+  }
+
+  querySource() {
+    let reqconfig = {
+      method: "GET",
+      url: Config.source.query,
+    };
+    return axios(reqconfig)
+      .then((res) => {
+        if (res.errno === 200) {
+          res.data.list = res.data.list.map((val, index) => {
+            val.key = val.id;
+            val.title = val.name;
+            return val;
+          })
+          this.sourceList = Object.assign([], res.data.list);
+          return true
+        } else {
+          message.error(res.errmsg)
+        }
+      })
+      .catch((err) => {
+        console.log(err)
+        // message.error('数据请求失败')
+      });
+  }
+  queryDBList(id) {
+    let reqconfig = {
+      method: "GET",
+      url: Config.interface.queryDBTables + id,
+    };
+    axios(reqconfig)
+      .then((res) => {
+        if (res.errno === 200) {
+          res.data = res.data.map((val, index) => {
+            val.key = val.tableName;//val.dbName||
+            val.title = val.tableName;
+            val.id = id;
+            return val;
+          })
+          this.dbList = Object.assign([], res.data);
+        } else {
+          message.error(res.errmsg)
+        }
+      })
+      .catch((err) => {
+        console.log(err)
+        message.error('数据请求失败')
+      });
+  }
+  queryDBTables(id) {
+    let reqconfig = {
+      method: "GET",
+      url: Config.interface.queryDBTables + id,
+    };
+    axios(reqconfig)
+      .then((res) => {
+        if (res.errno === 200) {
+          res.data = res.data.map((val, index) => {
+            val.key = val.tableName;//val.dbName||
+            val.title = val.tableName;
+            val.id = id;
+            return val;
+          })
+          this.tableList = Object.assign([], res.data);
+        } else {
+          message.error(res.errmsg)
+        }
+      })
+      .catch((err) => {
+        console.log(err)
+        message.error('数据请求失败')
+      });
+  }
+  queryDBFileds(id, tableName) {
+    let reqconfig = {
+      method: "GET",
+      url: Config.interface.queryDBFileds + id + `?tableName=${tableName}`,
+    };
+    axios(reqconfig)
+      .then((res) => {
+        if (res.errno === 200) {
+          let fieldsList = res.data.fields;
+          this.fieldsList = Object.assign([], fieldsList);
         } else {
           message.error(res.errmsg)
         }

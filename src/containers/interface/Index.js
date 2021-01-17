@@ -2,7 +2,6 @@ import React from "react";
 import { observer } from "mobx-react";
 import { Table, Row, Col, Button, message, Modal, Space } from "antd";
 import InterfaceStore from "../../stores/InterfaceStore";
-import ModalBox from "../../components/ModalBox";
 import InterfaceEdit from "./components/InterfaceEdit";
 
 @observer
@@ -49,8 +48,7 @@ class Interface extends React.Component {
         key: 'isPublish',
         dataIndex: 'isPublish',
         render: (text, record) => {
-          console.log(record)
-          let { isPublish, id } = record
+          let { isPublish } = record
           switch (isPublish) {
             case 0:
               text = (<span><span className="ant-badge-status-dot ant-badge-status-default"></span>未发布</span>);
@@ -81,7 +79,6 @@ class Interface extends React.Component {
         key: 'option',
         dataIndex: 'option',
         render: (text, record) => {
-          console.log(record)
           let { isPublish, id } = record
           return (<Space size="left">
             {isPublish ? <span key="span1">发布</span> :
@@ -97,10 +94,6 @@ class Interface extends React.Component {
             >删除</a>
           </Space>)
         }
-        // [
-        //     <a key="link" onClick={this.handleEdit}>编辑</a>, <a key="link2" className="color-red ml10"
-        //       onClick={this.handleRemove}
-        //     >删除</a>],
       },
     ];
   }
@@ -189,7 +182,9 @@ class Interface extends React.Component {
         visible={this.state.visible}
         handleOk={this.handleSave}
         handleCancel={this.handleCancel}
-        store={this.store} columns={this.store.columns}
+        store={this.store}
+        columns={this.store.columns}
+        InterColumns={this.store.InterColumns}
       />
     }
     return (
