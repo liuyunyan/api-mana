@@ -20,6 +20,15 @@ const Config = {
         delete: `${serverUrl}/thirdPartyPlatform/`,
         connection: `${serverUrl}/thirdPartyPlatform/connection`,
     },
+    user: {
+        login:`${serverUrl}/user/login`,
+        query: `${serverUrl}/user/list`,
+        add: `${serverUrl}/user/add`,
+        queryDetail: `${serverUrl}/user/`,
+        update: `${serverUrl}/user`,
+        delete: `${serverUrl}/user/`,
+        connection: `${serverUrl}/user/connection`,
+    },
     interface: {
         query: `${serverUrl}/external/interface/list`,
         add: `${serverUrl}/external/interface/add`,
