@@ -5,20 +5,22 @@ import GlobalStore from "../stores/GlobalStore";
  * 请求拦截器
  * 请求之前加上加载图和统一的头信息
  */
-axios.defaults.withCredentials=true;
+axios.defaults.withCredentials = true;
 
 axios.interceptors.request.use(function (config) {
   if (!config.noShowGlobalShowWait) {
     GlobalStore.showWait();
   }
+  let token = sessionStorage.getItem("dbsys_token");
   return {
     // dataType: 'json',
     headers: {
-      contentType: 'application/json'
+      contentType: 'application/json',
+      Authorization: `Bearer ${token}`
     },
-    withCredentials:true,
+    withCredentials: true,
     ...config
-   };
+  };
 }, function (err) {
   return Promise.reject(err);
 });
@@ -31,7 +33,7 @@ axios.interceptors.response.use(function (response) {
   GlobalStore.hideWait();
   if (response.status >= 200 && response.status < 300) {
     return response.data;
-  }else{
+  } else {
     console.log(response)
     return Promise.reject(response);
   }
