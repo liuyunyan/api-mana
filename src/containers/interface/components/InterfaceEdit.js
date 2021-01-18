@@ -67,9 +67,8 @@ class InterfaceEdit extends React.Component {
   }
 
   componentDidMount() {
-    if(this.props.isEdit !== 0){
+    if (this.props.isEdit !== 0) {
       this.store.queryByid()
-      // this
     }
     this.store.querySource()
     // this.setState(this.props.values)
@@ -79,9 +78,7 @@ class InterfaceEdit extends React.Component {
     let key = col.key
     let value = event.target.value.trim()
     let flag = this.validateValue(col, value)
-    if (flag) {
-      this.setValue(key, value)
-    }
+    this.setValue(key, value)
   }
   onSelectChange = (col, value) => {
     let key = col.key
@@ -107,9 +104,7 @@ class InterfaceEdit extends React.Component {
   handleNumberChange = (col, value) => {
     let key = col.key
     let flag = this.validateValue(col, value)
-    if (flag) {
-      this.setValue(key, value)
-    }
+    this.setValue(key, value)
   };
   setValue = (key, value) => {
     this.store.values[key] = value

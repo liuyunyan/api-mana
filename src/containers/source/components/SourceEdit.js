@@ -62,9 +62,7 @@ class SourceEdit extends React.Component {
   handleNumberChange = (col, value) => {
     let key = col.key
     let flag = this.validateValue(col, value)
-    if (flag) {
-      this.setValue(key, value)
-    }
+    this.setValue(key, value)
   };
   setValue = (key, value) => {
     this.store.values[key] = value

@@ -62,9 +62,7 @@ class ThirdEdit extends React.Component {
   handleNumberChange = (col, value) => {
     let key = col.key
     let flag = this.validateValue(col, value)
-    if (flag) {
-      this.setValue(key, value)
-    }
+    this.setValue(key, value)
   };
   setValue = (key, value) => {
     this.store.values[key] = value
@@ -171,7 +169,7 @@ class ThirdEdit extends React.Component {
         })}
         <Form.Item {...tailLayout}>
           <Button type="link" htmlType="button" onClick={this.onCreat}>
-          点击生成
+            点击生成
           </Button>
         </Form.Item>
       </Form>

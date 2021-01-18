@@ -44,7 +44,6 @@ class UserEdit extends React.Component {
   handleInputChange = (col, event) => {
     let key = col.key
     let value = event.target.value.trim()
-    // console.log(value);
     let flag = this.validateValue(col, value)
     this.setValue(key, value)
   }
@@ -63,9 +62,7 @@ class UserEdit extends React.Component {
   handleNumberChange = (col, value) => {
     let key = col.key
     let flag = this.validateValue(col, value)
-    if (flag) {
-      this.setValue(key, value)
-    }
+    this.setValue(key, value)
   };
   setValue = (key, value) => {
     this.store.values[key] = value
